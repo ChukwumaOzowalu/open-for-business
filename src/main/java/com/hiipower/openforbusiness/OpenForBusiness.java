@@ -29,8 +29,8 @@ import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod(ExampleMod.MODID)
-public class ExampleMod
+@Mod(OpenForBusiness.MODID)
+public class OpenForBusiness
 {
     // Define mod id in a common place for everything to reference
     public static final String MODID = "openforbusiness";
@@ -60,12 +60,15 @@ public class ExampleMod
                 output.accept(EXAMPLE_ITEM.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
             }).build());
 
-    public ExampleMod(FMLJavaModLoadingContext context)
+    public OpenForBusiness(FMLJavaModLoadingContext context)
     {
         IEventBus modEventBus = context.getModEventBus();
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
+
+        ModBlocks.register(modEventBus);
+        ModItems.register(modEventBus);
 
         // Register the Deferred Register to the mod event bus so blocks get registered
         BLOCKS.register(modEventBus);
