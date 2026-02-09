@@ -1,5 +1,7 @@
 package com.hiipower.openforbusiness;
 
+import com.hiipower.openforbusiness.block.RegisterBlock;
+
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -13,7 +15,7 @@ public class ModBlocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, OpenForBusiness.MODID);
 
     public static final RegistryObject<Block> REGISTER = BLOCKS.register("register",
-            () -> new RegisterBlock(BlockBehaviour.Properties.of()
+            () -> new com.hiipower.openforbusiness.block.RegisterBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)
                     .strength(2.0f)
                     .requiresCorrectToolForDrops()
