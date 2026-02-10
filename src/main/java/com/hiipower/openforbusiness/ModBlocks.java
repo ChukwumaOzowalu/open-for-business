@@ -15,12 +15,29 @@ public class ModBlocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, OpenForBusiness.MODID);
 
     public static final RegistryObject<Block> REGISTER = BLOCKS.register("register",
-            () -> new com.hiipower.openforbusiness.block.RegisterBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.WOOD)
-                    .strength(2.0f)
-                    .requiresCorrectToolForDrops()
-            )
-    );
+                () -> new com.hiipower.openforbusiness.block.RegisterBlock(BlockBehaviour.Properties.of()
+                        .mapColor(MapColor.WOOD)
+                        .strength(2.0f)
+                        .requiresCorrectToolForDrops()
+                )
+        );
+
+    public static final RegistryObject<Block> LEDGER = BLOCKS.register("ledger",
+                () -> new com.hiipower.openforbusiness.block.LedgerBlock(BlockBehaviour.Properties.of()
+                        .mapColor(MapColor.WOOD)
+                        .strength(2.0f)
+                        .requiresCorrectToolForDrops()
+                )
+        );
+
+        public static final RegistryObject<Block> DISPLAY_SHELF = BLOCKS.register("display_shelf",
+                () -> new com.hiipower.openforbusiness.block.DisplayShelfBlock(BlockBehaviour.Properties.of()
+                        .mapColor(MapColor.WOOD)
+                        .strength(2.0f)
+                        .requiresCorrectToolForDrops()
+                )
+        );
+
 
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);

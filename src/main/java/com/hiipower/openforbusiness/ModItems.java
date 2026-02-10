@@ -13,6 +13,14 @@ public class ModItems {
 
     public static final RegistryObject<Item> REGISTER_ITEM = ITEMS.register("register",
             () -> new BlockItem(ModBlocks.REGISTER.get(), new Item.Properties()));
+    
+    public static final RegistryObject<Item> LEDGER_ITEM = ITEMS.register("ledger",
+            () -> new BlockItem(ModBlocks.LEDGER.get(), new Item.Properties()));
+
+        public static final RegistryObject<Item> DISPLAY_SHELF_ITEM = ITEMS.register("display_shelf",
+                () -> new BlockItem(ModBlocks.DISPLAY_SHELF.get(), new Item.Properties()));
+
+
 
     public static void register(IEventBus bus) {
         ITEMS.register(bus);

@@ -14,6 +14,12 @@ public class ModMenus {
 
     public static final RegistryObject<MenuType<RegisterMenu>> REGISTER_MENU =
             MENUS.register("register", () -> IForgeMenuType.create(RegisterMenu::new));
+    
+    public static final RegistryObject<MenuType<com.hiipower.openforbusiness.menu.LedgerMenu>> LEDGER_MENU =
+            MENUS.register("ledger", () -> IForgeMenuType.create(com.hiipower.openforbusiness.menu.LedgerMenu::new));
+
+        public static final RegistryObject<MenuType<com.hiipower.openforbusiness.menu.DisplayShelfMenu>> DISPLAY_SHELF_MENU =
+                MENUS.register("display_shelf", () -> IForgeMenuType.create(com.hiipower.openforbusiness.menu.DisplayShelfMenu::new));
 
     public static void register(IEventBus bus) {
         MENUS.register(bus);

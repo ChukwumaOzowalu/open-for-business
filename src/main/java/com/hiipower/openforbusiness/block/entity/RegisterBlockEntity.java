@@ -17,12 +17,18 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import com.hiipower.openforbusiness.block.entity.LedgerBlockEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nullable;
 
 public class RegisterBlockEntity extends BlockEntity implements MenuProvider {
+
+    private BlockPos boundLedgerPos = null;
 
     // Slot 0 = input item, Slot 1 = currency output
     private final ItemStackHandler items = new ItemStackHandler(2) {
@@ -41,6 +47,43 @@ public class RegisterBlockEntity extends BlockEntity implements MenuProvider {
     };
 
     private LazyOptional<ItemStackHandler> itemCap = LazyOptional.empty();
+
+    private LedgerBlockEntity findNearbyLedger(int radius) {
+        if (level == null) return null;
+
+        BlockPos origin = getBlockPos();
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dy = -radius; dy <= radius; dy++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    cursor.set(origin.getX() + dx, origin.getY() + dy, origin.getZ() + dz);
+                    var be = level.getBlockEntity(cursor);
+                    if (be instanceof LedgerBlockEntity ledger) return ledger;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void bindLedger(BlockPos ledgerPos) {
+        this.boundLedgerPos = ledgerPos.immutable();
+        setChanged();
+
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+        }
+    }
+
+    public BlockPos getBoundLedgerPos() {
+        return boundLedgerPos;
+    }
+
+    private LedgerBlockEntity getBoundLedger() {
+        if (level == null || boundLedgerPos == null) return null;
+        BlockEntity be = level.getBlockEntity(boundLedgerPos);
+        return (be instanceof LedgerBlockEntity ledger) ? ledger : null;
+    }
 
     public RegisterBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.REGISTER_BE.get(), pos, state);
@@ -85,6 +128,9 @@ public class RegisterBlockEntity extends BlockEntity implements MenuProvider {
     protected void saveAdditional(CompoundTag tag) {
         tag.put("inv", items.serializeNBT());
         super.saveAdditional(tag);
+        if (boundLedgerPos != null) {
+        tag.put("boundLedgerPos", NbtUtils.writeBlockPos(boundLedgerPos));
+        }
     }
 
     @Override
@@ -93,21 +139,39 @@ public class RegisterBlockEntity extends BlockEntity implements MenuProvider {
         if (tag.contains("inv")) {
             items.deserializeNBT(tag.getCompound("inv"));
         }
+        if (tag.contains("boundLedgerPos")) {
+            boundLedgerPos = NbtUtils.readBlockPos(tag.getCompound("boundLedgerPos"));
+        } else {
+            boundLedgerPos = null;
+        }
     }
 
     private void recalcPayout() {
         ItemStack input = items.getStackInSlot(0);
 
-        // No input => clear payout
         if (input.isEmpty()) {
             items.setStackInSlot(1, ItemStack.EMPTY);
             return;
         }
 
-        // Simple v0 pricing: 1 emerald per item (up to 64)
         int count = Math.min(input.getCount(), 64);
-        ItemStack payout = new ItemStack(Items.EMERALD, count);
 
+        int pricePerItem = 1; // fallback
+        LedgerBlockEntity ledger = getBoundLedger();
+        if (ledger == null) {
+            ledger = findNearbyLedger(16); // keep as fallback for now
+        }
+        if (ledger != null) {
+            pricePerItem = ledger.getPriceFor(input);
+        }
+
+        int total = Math.max(0, pricePerItem * count);
+
+        // For now, cap output to one stack so we don't deal with multi-stack payouts yet
+        total = Math.min(total, 64);
+
+        ItemStack payout = new ItemStack(Items.EMERALD, total);
         items.setStackInSlot(1, payout);
     }
+
 }

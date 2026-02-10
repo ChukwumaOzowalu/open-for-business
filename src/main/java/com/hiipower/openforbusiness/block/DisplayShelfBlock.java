@@ -1,12 +1,15 @@
 package com.hiipower.openforbusiness.block;
 
-import com.hiipower.openforbusiness.block.entity.RegisterBlockEntity;
+import com.hiipower.openforbusiness.ModBlocks;
+import com.hiipower.openforbusiness.block.entity.DisplayShelfBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -14,13 +17,13 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.NetworkHooks;
-import com.hiipower.openforbusiness.ModBlocks;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.Level;
 
-public class RegisterBlock extends BaseEntityBlock {
-    public RegisterBlock(Properties props) {
+
+public class DisplayShelfBlock extends BaseEntityBlock {
+
+    public DisplayShelfBlock(Properties props) {
         super(props);
     }
 
@@ -31,38 +34,34 @@ public class RegisterBlock extends BaseEntityBlock {
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new RegisterBlockEntity(pos, state);
+        return new DisplayShelfBlockEntity(pos, state);
     }
 
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos,
-                                Player player, InteractionHand hand, BlockHitResult hit) {
+                                 Player player, InteractionHand hand, BlockHitResult hit) {
 
         if (level.isClientSide) return InteractionResult.SUCCESS;
 
         BlockEntity be = level.getBlockEntity(pos);
-        if (!(be instanceof RegisterBlockEntity registerBE)) {
-            return InteractionResult.PASS;
-        }
+        if (!(be instanceof DisplayShelfBlockEntity shelfBE)) return InteractionResult.PASS;
 
-        // SHIFT-RIGHT-CLICK with a Ledger block item to bind
+        // SHIFT-RIGHT-CLICK with Ledger block item to bind to nearest Ledger
         if (player.isShiftKeyDown()) {
             ItemStack held = player.getItemInHand(hand);
             if (held.is(ModBlocks.LEDGER.get().asItem())) {
-                // Find the nearest Ledger block entity within 6 blocks and bind to it
                 BlockPos ledgerPos = findNearestLedger(level, pos, 6);
                 if (ledgerPos != null) {
-                    registerBE.bindLedger(ledgerPos);
-                    player.sendSystemMessage(Component.literal("Register bound to Ledger at " + ledgerPos.toShortString()));
-                    return InteractionResult.SUCCESS;
+                    shelfBE.bindLedger(ledgerPos);
+                    player.sendSystemMessage(Component.literal("Shelf bound to Ledger at " + ledgerPos.toShortString()));
                 } else {
                     player.sendSystemMessage(Component.literal("No Ledger found nearby to bind."));
-                    return InteractionResult.SUCCESS;
                 }
+                return InteractionResult.SUCCESS;
             }
         }
 
-        // Normal right-click: open GUI
+        // Normal right-click: open shelf UI
         if (be instanceof MenuProvider provider) {
             NetworkHooks.openScreen((ServerPlayer) player, provider, pos);
         }
@@ -77,7 +76,7 @@ public class RegisterBlock extends BaseEntityBlock {
             for (int dy = -radius; dy <= radius; dy++) {
                 for (int dz = -radius; dz <= radius; dz++) {
                     BlockPos p = origin.offset(dx, dy, dz);
-                    BlockEntity be = level.getBlockEntity(p);
+                    var be = level.getBlockEntity(p);
                     if (be instanceof com.hiipower.openforbusiness.block.entity.LedgerBlockEntity) {
                         double d = origin.distSqr(p);
                         if (d < bestDist) {
@@ -90,4 +89,5 @@ public class RegisterBlock extends BaseEntityBlock {
         }
         return best;
     }
+
 }

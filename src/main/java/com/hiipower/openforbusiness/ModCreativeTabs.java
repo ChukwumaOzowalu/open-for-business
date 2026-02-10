@@ -13,6 +13,8 @@ public class ModCreativeTabs {
         // Put Register in the Functional Blocks tab
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
             event.accept(ModItems.REGISTER_ITEM);
+            event.accept(ModItems.LEDGER_ITEM.get());
+            event.accept(ModItems.DISPLAY_SHELF_ITEM.get());
         }
     }
 }

@@ -89,22 +89,35 @@ public class RegisterMenu extends AbstractContainerMenu {
         Slot slot = this.slots.get(index);
         if (!slot.hasItem()) return empty;
 
-        ItemStack stack = slot.getItem();
-        ItemStack copy = stack.copy();
+        ItemStack stackInSlot = slot.getItem();
+        ItemStack original = stackInSlot.copy();
 
-        int containerSlots = 2; // our BE slots
+        int containerSlots = 2; // BE slots: 0=input, 1=output
 
         if (index < containerSlots) {
-            // move from BE -> player
-            if (!this.moveItemStackTo(stack, containerSlots, this.slots.size(), true)) return empty;
+            // Moving from BE -> player inventory
+            if (!this.moveItemStackTo(stackInSlot, containerSlots, this.slots.size(), true)) {
+                return empty;
+            }
+
+            // ✅ If this was the OUTPUT slot, consume matching input for the amount actually moved
+            if (index == 1) {
+                int movedCount = original.getCount() - stackInSlot.getCount(); // how many emeralds actually moved
+                if (movedCount > 0) {
+                    be.getItems().extractItem(0, movedCount, false); // 1 emerald per 1 item in v0/v1
+                }
+            }
         } else {
-            // move from player -> BE (prefer input slot 0)
-            if (!this.moveItemStackTo(stack, 0, 1, false)) return empty;
+            // Moving from player -> BE (prefer input slot 0)
+            if (!this.moveItemStackTo(stackInSlot, 0, 1, false)) {
+                return empty;
+            }
         }
 
-        if (stack.isEmpty()) slot.set(ItemStack.EMPTY);
+        if (stackInSlot.isEmpty()) slot.set(ItemStack.EMPTY);
         else slot.setChanged();
 
-        return copy;
+        return original;
     }
+
 }
