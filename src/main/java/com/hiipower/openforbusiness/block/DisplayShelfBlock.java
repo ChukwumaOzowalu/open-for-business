@@ -46,21 +46,6 @@ public class DisplayShelfBlock extends BaseEntityBlock {
         BlockEntity be = level.getBlockEntity(pos);
         if (!(be instanceof DisplayShelfBlockEntity shelfBE)) return InteractionResult.PASS;
 
-        // SHIFT-RIGHT-CLICK with Ledger block item to bind to nearest Ledger
-        if (player.isShiftKeyDown()) {
-            ItemStack held = player.getItemInHand(hand);
-            if (held.is(ModBlocks.LEDGER.get().asItem())) {
-                BlockPos ledgerPos = findNearestLedger(level, pos, 6);
-                if (ledgerPos != null) {
-                    shelfBE.bindLedger(ledgerPos);
-                    player.sendSystemMessage(Component.literal("Shelf bound to Ledger at " + ledgerPos.toShortString()));
-                } else {
-                    player.sendSystemMessage(Component.literal("No Ledger found nearby to bind."));
-                }
-                return InteractionResult.SUCCESS;
-            }
-        }
-
         // Normal right-click: open shelf UI
         if (be instanceof MenuProvider provider) {
             NetworkHooks.openScreen((ServerPlayer) player, provider, pos);

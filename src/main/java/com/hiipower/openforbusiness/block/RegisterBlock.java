@@ -45,23 +45,6 @@ public class RegisterBlock extends BaseEntityBlock {
             return InteractionResult.PASS;
         }
 
-        // SHIFT-RIGHT-CLICK with a Ledger block item to bind
-        if (player.isShiftKeyDown()) {
-            ItemStack held = player.getItemInHand(hand);
-            if (held.is(ModBlocks.LEDGER.get().asItem())) {
-                // Find the nearest Ledger block entity within 6 blocks and bind to it
-                BlockPos ledgerPos = findNearestLedger(level, pos, 6);
-                if (ledgerPos != null) {
-                    registerBE.bindLedger(ledgerPos);
-                    player.sendSystemMessage(Component.literal("Register bound to Ledger at " + ledgerPos.toShortString()));
-                    return InteractionResult.SUCCESS;
-                } else {
-                    player.sendSystemMessage(Component.literal("No Ledger found nearby to bind."));
-                    return InteractionResult.SUCCESS;
-                }
-            }
-        }
-
         // Normal right-click: open GUI
         if (be instanceof MenuProvider provider) {
             NetworkHooks.openScreen((ServerPlayer) player, provider, pos);

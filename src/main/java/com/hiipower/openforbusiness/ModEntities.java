@@ -14,7 +14,7 @@ public class ModEntities {
 
     public static final RegistryObject<EntityType<CustomerEntity>> CUSTOMER =
         ENTITIES.register("customer", () ->
-                EntityType.Builder.of(CustomerEntity::new, MobCategory.MONSTER)
+                EntityType.Builder.of(CustomerEntity::new, MobCategory.CREATURE)
                         .sized(0.6f, 1.95f)
                         .build("customer")
         );

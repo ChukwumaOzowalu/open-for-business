@@ -22,6 +22,9 @@ public class ModItems {
 
         public static final RegistryObject<Item> SHOP_SIGN_ITEM = ITEMS.register("shop_sign",
                 () -> new BlockItem(ModBlocks.SHOP_SIGN.get(), new Item.Properties()));
+        
+        public static final RegistryObject<Item> PEN = ITEMS.register("pen",
+                () -> new com.hiipower.openforbusiness.item.PenItem(new Item.Properties().stacksTo(1)));
 
     public static void register(IEventBus bus) {
         ITEMS.register(bus);

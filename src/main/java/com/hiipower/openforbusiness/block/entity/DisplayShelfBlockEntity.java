@@ -21,6 +21,9 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+
 
 import javax.annotation.Nullable;
 
@@ -39,6 +42,21 @@ public class DisplayShelfBlockEntity extends BlockEntity implements MenuProvider
 
     public DisplayShelfBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.DISPLAY_SHELF_BE.get(), pos, state);
+    }
+
+    public boolean hasItem(Item item) {
+        ItemStack stack = items.getStackInSlot(0);
+        return !stack.isEmpty() && stack.getItem() == item;
+    }
+
+    public boolean takeOne(Item item) {
+        ItemStack stack = items.getStackInSlot(0);
+        if (!stack.isEmpty() && stack.getItem() == item) {
+            items.extractItem(0, 1, false);
+            setChanged();
+            return true;
+        }
+        return false;
     }
 
     @Override

@@ -16,6 +16,7 @@ public class ModCreativeTabs {
             event.accept(ModItems.LEDGER_ITEM.get());
             event.accept(ModItems.DISPLAY_SHELF_ITEM.get());
             event.accept(ModItems.SHOP_SIGN_ITEM.get());
+            event.accept(ModItems.PEN.get());
         }
     }
 }
