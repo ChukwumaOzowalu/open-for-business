@@ -38,6 +38,13 @@ public class ModBlocks {
                 )
         );
 
+        public static final RegistryObject<Block> SHOP_SIGN = BLOCKS.register("shop_sign",
+                () -> new com.hiipower.openforbusiness.block.ShopSignBlock(BlockBehaviour.Properties.of()
+                        .mapColor(MapColor.WOOD)
+                        .strength(2.0f)
+                        .noOcclusion()
+                )
+        );
 
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);

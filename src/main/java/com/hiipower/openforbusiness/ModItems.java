@@ -20,7 +20,8 @@ public class ModItems {
         public static final RegistryObject<Item> DISPLAY_SHELF_ITEM = ITEMS.register("display_shelf",
                 () -> new BlockItem(ModBlocks.DISPLAY_SHELF.get(), new Item.Properties()));
 
-
+        public static final RegistryObject<Item> SHOP_SIGN_ITEM = ITEMS.register("shop_sign",
+                () -> new BlockItem(ModBlocks.SHOP_SIGN.get(), new Item.Properties()));
 
     public static void register(IEventBus bus) {
         ITEMS.register(bus);

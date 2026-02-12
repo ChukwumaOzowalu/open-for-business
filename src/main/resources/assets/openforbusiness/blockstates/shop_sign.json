@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "open=false": { "model": "openforbusiness:block/shop_sign_closed" },
+    "open=true": { "model": "openforbusiness:block/shop_sign_open" }
+  }
+}
